@@ -2,15 +2,15 @@
 目录
 ---
 * [实验内容](#实验内容)
-    * [数据集简介](###数据集简介)
-    * [CNN网络构建](###CNN网络构建)
-    * [AlexNet网络](###AlexNet网络)
-    * [VGG16网络](###VGG16网络)
-* [实验结果和分析](##实验结果和分析)
-    * [CNN参数调整](###CNN参数调整)
-    * [ResNet](###ResNet)
-    * [Xception](###Xception)
-    * [ResNet50 + Xception + Inception V3](###ResNet50 + Xception + Inception V3)
+    * [数据集简介](#数据集简介)
+    * [CNN网络构建](#CNN网络构建)
+    * [AlexNet网络](#AlexNet网络)
+    * [VGG16网络](#VGG16网络)
+* [实验结果和分析](#实验结果和分析)
+    * [CNN参数调整](#CNN参数调整)
+    * [ResNet](#ResNet)
+    * [Xception](#Xception)
+    * [ResNet50+Xception+Inception V3](#ResNet50+Xception+InceptionV3)
 * [各种方法比较](##各种方法比较)
 * [个人总结](##个人总结)
 ***
@@ -76,7 +76,7 @@ sigmoid和softmax是神经网络输出层使用的激活函数，分别用于两
 ### CNN参数调整
 ### ResNet
 ### Xception
-### ResNet50 + Xception + Inception V3
+### ResNet50+Xception+InceptionV3
 ## 各种方法比较
 终于到我觉得很酷炫的环节了，前面我们一共有6种CNN模型，这里我们将6种模型放在一起比较：  
 从网络规模上来看，AlexNet作为早期CNN网络，比较繁重，但是正是大量的神经元，才具有跨时代的作用。之后的网络进行结构优化，减少网络规模，提高效率。  单位epoch用时的数据我也贴上去，但是参考意义不大，一方面是batch_size并不完全相同，并且后面的复杂网络都是用训练好的模型，就做个参考吧。  
