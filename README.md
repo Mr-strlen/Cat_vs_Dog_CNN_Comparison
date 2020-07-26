@@ -1,4 +1,4 @@
-# Cat_vs_Dog-CNN-compare
+# Cat_vs_Dog-CNN-Comparison
 目录
 ---
 * [实验内容](#实验内容)
@@ -25,7 +25,8 @@
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/scatter_diagram_train_dataset.png)</br>
 测试集中图片的尺寸散点分布图：</br>
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/scatter_diagram_test_dataset.png)</br>
-可以发现图像的大小存在着差异性，这就需要我们上来对图像进行一定的预处理。</br>
+可以发现图像的大小存在着差异性，这就需要我们上来对图像进行一定的预处理。  
+  
 还有大佬发现，存在部分过于难识别的图像，通过手动删除的方式进行预处理，这里我觉得很有意思，也贴在这，但是之后的实验并没有进行数据的剔除。</br>
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/image_movement.png)
 ### CNN网络构建
