@@ -221,7 +221,8 @@ Loss也是从0.7降到了0.36
 
 ### ResNet
 残差网络大名鼎鼎，所以我也是找了一个ResNet来看看结果（网上那些代码都用不了，这个代码是我自己写的OTZ）  
-下图为ResNet34的结构，对于一个"Plain Network普通网络"，把它变为ResNet的方法是加上所有的跳远连接(skip connections).每两层增加一个跳远连接构成一个残差块，ResNet在训练深度网络方面非常有效:  
+下图为ResNet34的结构，对于一个"Plain Network普通网络"，把它变为ResNet的方法是加上所有的跳远连接(skip connections).每两层增加一个跳远连接构成一个残差块，ResNet在训练深度网络方面非常有效: 
+  
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/resnet_model.png)  
   
 与之类似的，随着层数的不同，还有ResNet18,ResNet50,ResNet101。ResNet50网络层数较多，就不展示具体的网络安排了。同样为了保证输出结果为二分类，加了一层全连接层。  
@@ -245,20 +246,57 @@ Acc和Loss曲线为：
 
 
 ### Xception
+简单介绍一下Xception, Inception V3，这也是我第一次听到。  
+  
+Inception是一个模型家族，从V1进化到V4。Inception V1就是GoogleNet, Inception V2/V3有了总体设计原则、分解尺寸较大的卷积核、辅助分类器的效用、高效的降维方法(通过低维度嵌入来完成空间聚合)。  
+  
+Xception 是 Google 继 Inception 后提出的对 Inception-v3 的另一种改进。作者认为，通道之间的相关性 与 空间相关性 最好要分开处理。采用 Separable Convolution（极致的 Inception 模块）来替换原来 Inception-v3中的卷积操作。  
+  
+总而言之，Xception 是由 Inception结构演变而来,借鉴了 Depthwise Convolution思想的架构, 同时使用了ResNet的思想，具体的结构如下：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/xception_model.png)  
+  
+Keras中也是直接提供了Xception的网络结构(https://www.cnblogs.com/zhengbiqing/p/12008482.html)  
+结合之前的代码，很容易写出猫狗大战的demo，具体的网络结构层数很多，就不截图放上来了，但是可以看到总共有两千多万个params，网络十分复杂。  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/xception_structure.png)  
+  
+这里也是直接下载了训练好的模型（我的电脑不可能跑完这个模型的）  
+计算过程如下，在使用已经训练好的模型下，单个epoch还需要长达30s的训练，可见网络规模之大：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/xception_process.png)  
+最后的Acc和Loss图像，正确率达到了98%，loss也小于了0.05，而且这种复杂的网络完全没有出现过拟合的情况，可以说是非常优秀了：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/xception_acc.png)  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/xception_loss.png)  
 
 
 ### ResNet50+Xception+InceptionV3
+Xception的结果已经非常优秀了，但是我还是找到了更厉害的思路。这里就要介绍一个大神的思路了(https://zhuanlan.zhihu.com/p/25978105)号称能够在Kaggle平台上跑到20名左右的成绩，简单说一下他的思路。  
+  
+大神试了一下各种预训练的网络，发现排名都不行，那么一种有效的方法是综合各个不同的模型，从而得到不错的效果，所以他使用了ResNet50, Xception, Inception V3 这三个模型，结构模型如下：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/three_model.png) 
+  
+我也是把大神的代码拿了过来，自己跑了一下，结果如下：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/three_process.png) 
+设置验证集大小为 20% ，也就是说训练集是20000张图，验证集是5000张图。为了和前面的epoch数量一致，我这里也是30次。  
+非常厉害，从第二次epoch之后每次训练只需要1s，而且正确率达到了恐怖的99.6%，loss连0.01都不到，可见模型整合的厉害之处。  
 
 
 ## 各种方法比较
 终于到我觉得很酷炫的环节了，前面我们一共有6种CNN模型，这里我们将6种模型放在一起比较：  
-从网络规模上来看，AlexNet作为早期CNN网络，比较繁重，但是正是大量的神经元，才具有跨时代的作用。之后的网络进行结构优化，减少网络规模，提高效率。  单位epoch用时的数据我也贴上去，但是参考意义不大，一方面是batch_size并不完全相同，并且后面的复杂网络都是用训练好的模型，就做个参考吧。  
+  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_total.png)  
+从网络规模上来看，AlexNet作为早期CNN网络，比较繁重，但是正是大量的神经元，才具有跨时代的作用。之后的网络进行结构优化，减少网络规模，提高效率。   
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_epoch.png)  
+单位epoch用时的数据我也贴上去，但是参考意义不大，一方面是batch_size并不完全相同，并且后面的复杂网络都是用训练好的模型，就做个参考吧。  
+  
+
 下面是在测试集上Acc曲线和Loss曲线的比较，这里都是30次epoch，所以还是具有比较价值的（部分和之前给的图不一样，是因为后来重新算补的数据，不过趋势是没有变化的）：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_acc.png)  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_loss.png)  
+  
 基本上越是后来出现的网络，效果越好，非常符合CNN网络的发展趋势。其中ResNet因为用了50层，所以出现了过拟合，AlexNet也是出现了这样的情况，这个算是情理之中吧。  
 
 
 ## 个人总结
-这次做的=很简单很简单，不过也算是满足了我个人小小的心愿。以前看到各种模型放在一起比较非常的酷炫，现在我也可以照这样子自己做一个，还是有点成就感的。  
+这次做的很简单很简单，不过也算是满足了我个人小小的心愿。以前看到各种模型放在一起比较非常的酷炫，现在我也可以照这样子自己做一个，还是有点成就感的。  
   
 然后Keras.application这个包里，有很多训练好可以直接用网络：
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-Comparison/blob/master/Images/Keras_application.png)  
