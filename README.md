@@ -196,9 +196,52 @@ train_datagen = ImageDataGenerator(
 
 ## 实验结果和分析
 ### CNN参数调整
+首先，增加了数据，原本训练集数据只使用了2600张，这里扩充到8600张。  
+网上基本上自己写的CNN都用到了三层，所以这里也是将网络扩展到3层，网络结构如下：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/new_cnn_structure.png)  
+  
+加入图像的一些变换：  
+```python
+train_datagen = ImageDataGenerator(
+    rescale=1. / 255,#值将在执行其他处理前乘到整个图像上
+    shear_range=0.2,#剪切强度（逆时针方向的剪切变换角度）
+    zoom_range=0.2,#随机缩放的幅度，用来进行随机的放大。
+horizontal_flip=True)#随机的对图片进行水平翻转，这个参数适用于水平翻转不影响图片语义的时候。
+```
+运行过程如下，每次epoch内的数据约为原来的三倍：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/new_cnn_process.png)  
+  
+首先是正确率：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/new_cnn_acc.png)  
+  
+随着数据量增大，网络的加深，图形的变换,测试集正确率达到了83%。有意思的是在前9次epoch内，正确率并没有发生变化，但是我们观察Loss图像就可以看到，模型本身是在收敛的：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/new_cnn_loss.png)  
+Loss也是从0.7降到了0.36
 
 
 ### ResNet
+残差网络大名鼎鼎，所以我也是找了一个ResNet来看看结果（网上那些代码都用不了，这个代码是我自己写的OTZ）  
+下图为ResNet34的结构，对于一个"Plain Network普通网络"，把它变为ResNet的方法是加上所有的跳远连接(skip connections).每两层增加一个跳远连接构成一个残差块，ResNet在训练深度网络方面非常有效:  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/resnet_model.png)  
+  
+与之类似的，随着层数的不同，还有ResNet18,ResNet50,ResNet101。ResNet50网络层数较多，就不展示具体的网络安排了。同样为了保证输出结果为二分类，加了一层全连接层。  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/resnet_structure.png)
+  
+值得一提的是Pytorch中有封装良好的ResNet网络，我也进行了尝试(https://www.cnblogs.com/weiba180/p/12417073.html)  
+但是由于版本问题，只能使用单线程去跑，效率很低，最关键的是，它居然把我显卡显存跑满了，太恐怖了，所以还是继续使用Keras进行操作。  
+  
+图像预处理工作和之前是类似的，就不再赘述。
+  
+然后这里为了简化计算过程，直接下载了现成的ResNet50的模型，下载地址(https://github.com/fchollet/deep-learning-models/releases/download/v0.2/resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5)
+  
+中间计算过程如下，可见每个epoch还是需要一定的时间计算：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/resnet_process.png)  
+
+Acc和Loss曲线为：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/resnet_acc.png)  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/resnet_loss.png)  
+  
+这里出现了一个ResNet很容易出现的问题，就是过拟合（网上很多人都有这个问题）这里主要是网络用的太深了（但是Keras自带的只有ResNet50，也不想自己再去写新的网络了）而且只有25000的图片，换成ResNet18在测试集上应该会有更好的效果。
 
 
 ### Xception
@@ -215,7 +258,7 @@ train_datagen = ImageDataGenerator(
 
 
 ## 个人总结
-这次算是满足了我个人小小的心愿。以前看到各种模型放在一起比较非常的酷炫，现在我也可以照这样子自己做一个，还是很有成就感的。  
+这次做的=很简单很简单，不过也算是满足了我个人小小的心愿。以前看到各种模型放在一起比较非常的酷炫，现在我也可以照这样子自己做一个，还是有点成就感的。  
   
 然后Keras.application这个包里，有很多训练好可以直接用网络：
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-Comparison/blob/master/Images/Keras_application.png)  
