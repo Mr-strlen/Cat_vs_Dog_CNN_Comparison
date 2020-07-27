@@ -146,7 +146,52 @@ model.add(Activation('softmax'))
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/alexnet_acc.png)  
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/alexnet_loss.png)  
 虽然在训练集上，模型越来越好，但是在推广上并没有太大的优势。当然这个和我自己写的网络有关，这里的AlexNet网络代码中，没有进行图像变换的数据增强，单次epoch的数据量也仅为4000张图片，这里就不做更多改进了，也能和之后的其他模型对比看出差异。
+
+
 ### VGG16网络
+这个VGG16就不介绍了，直接放一张结构图：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/vgg16_model.png)  
+这里我也是使用了Keras自带的VGG16网络，值得提醒的一点是，这里的VGG16最后的softmax全连接层输出结果为1 * 1000，但是我们这里是个二分类问题，所以，需要我们手动再加上一层全连接层改变输出结果，具体可以看公开的代码 (https://github.com/fchollet/deep-learning-models/blob/master/vgg16.py)  
+  
+所以最后网络定义如下：
+```python
+#VGG16网络
+conv_base = VGG16(weights='imagenet', 
+                  include_top=False,
+                  input_shape=(150, 150, 3))
+#构建网络
+model = models.Sequential() 
+model.add(conv_base) 
+model.add(layers.Flatten())
+model.add(layers.Dense(256, activation='relu')) 
+model.add(layers.Dense(1, activation='sigmoid'))
+
+model.compile(loss='binary_crossentropy', 
+              optimizer=optimizers.RMSprop(lr=1e-5), 
+              metrics=['acc'])
+```
+也是采用了sigmoid函数作为分类结果，使用二元交叉熵函数，利用RMSprop方法优化。结构图如下:  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/vgg16_structure.png)  
+  
+有关图像变换的部分，参考了一下别人的设定，设置如下：
+```python
+train_datagen = ImageDataGenerator(
+    rotation_range=15,#数据提升时图片随机转动的角度。随机选择图片的角度
+    rescale=1./255,#值将在执行其他处理前乘到整个图像上
+    shear_range=0.1,#剪切强度（逆时针方向的剪切变换角度）
+    zoom_range=0.2,#随机缩放的幅度。用来进行随机的放大。
+    horizontal_flip=True,#进行随机水平翻转。
+    width_shift_range=0.1,#随机水平偏移的幅度
+    height_shift_range=0.1#随机竖直偏移的幅度
+    #height_shift_range和width_shift_range是用来指定水平和竖直方向随机移动的程度，这是两个0~1之间的比例
+)
+```
+训练过程：
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/alexnet_process.png)  
+  
+设置验证集大小为 20% ，训练集是20000张图，验证集5000张图。单次epoch大概在20s左右，acc逐渐上升，最后达到97%，Loss降到0.1以下，具体的Acc和loss图如下：  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/vgg16_acc.png)  
+![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/vgg16_loss.png)  
 
 
 ## 实验结果和分析
