@@ -268,7 +268,8 @@ Keras中也是直接提供了Xception的网络结构(https://www.cnblogs.com/zhe
 
 
 ### ResNet50+Xception+InceptionV3
-Xception的结果已经非常优秀了，但是我还是找到了更厉害的思路。这里就要介绍一个大神的思路了(https://zhuanlan.zhihu.com/p/25978105)号称能够在Kaggle平台上跑到20名左右的成绩，简单说一下他的思路。  
+Xception的结果已经非常优秀了，但是我还是找到了更厉害的思路。这里就要介绍一个大神的思路了(https://zhuanlan.zhihu.com/p/25978105)  
+号称能够在Kaggle平台上跑到20名左右的成绩，简单说一下他的思路。  
   
 大神试了一下各种预训练的网络，发现排名都不行，那么一种有效的方法是综合各个不同的模型，从而得到不错的效果，所以他使用了ResNet50, Xception, Inception V3 这三个模型，结构模型如下：  
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/three_model.png) 
@@ -284,10 +285,10 @@ Xception的结果已经非常优秀了，但是我还是找到了更厉害的思
   
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_total.png)  
 从网络规模上来看，AlexNet作为早期CNN网络，比较繁重，但是正是大量的神经元，才具有跨时代的作用。之后的网络进行结构优化，减少网络规模，提高效率。   
+  
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_epoch.png)  
 单位epoch用时的数据我也贴上去，但是参考意义不大，一方面是batch_size并不完全相同，并且后面的复杂网络都是用训练好的模型，就做个参考吧。  
   
-
 下面是在测试集上Acc曲线和Loss曲线的比较，这里都是30次epoch，所以还是具有比较价值的（部分和之前给的图不一样，是因为后来重新算补的数据，不过趋势是没有变化的）：  
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_acc.png)  
 ![image](https://github.com/Mr-strlen/Cat_vs_Dog-CNN-compare/blob/master/Images/compare_loss.png)  
