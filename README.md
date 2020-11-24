@@ -1,4 +1,4 @@
-# Cat_vs_Dog-CNN-Comparison
+# Cat_vs_Dog_CNN_Comparison
 目录
 ---
 * [实验内容](#实验内容)
